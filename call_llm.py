@@ -1,7 +1,6 @@
 """Lightweight GPT caller for the Codex engine."""
 
 import os
-from openai import OpenAI
 
 
 def call_llm(prompt_final: str, model_name: str) -> str:
@@ -9,6 +8,11 @@ def call_llm(prompt_final: str, model_name: str) -> str:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
+
+    try:
+        from openai import OpenAI  # type: ignore
+    except ModuleNotFoundError as exc:  # pragma: no cover - import guard
+        raise RuntimeError("openai package is required to call the LLM.") from exc
 
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
