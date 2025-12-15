@@ -6,7 +6,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import List, Optional
+import json
 import re
+
+from call_llm import call_llm
 
 
 # 0️⃣ Estruturas de dados base
@@ -74,6 +77,8 @@ MODELOS_BASE = {
         "completa": "Pelo cenário atual, essa solução não é a mais adequada agora.\nSeguimos disponíveis para outro momento.\nEm seguida, posso explicar como aplicamos isso.",
     },
 }
+
+DEFAULT_LLM_MODEL = "gpt-4.1-mini"
 
 
 def executarAnalise(input: LeadInput) -> AnaliseResultado:
@@ -265,10 +270,55 @@ def contemTermosTecnicos(texto: str) -> bool:
 
 def IA_GERAR(modelo: str, mensagem_cliente: str, regras: List[str]) -> dict:
     template = MODELOS_BASE[modelo]
+    prompt_final = montarPromptFinal(modelo, mensagem_cliente, regras)
+    resposta_llm = call_llm(prompt_final, DEFAULT_LLM_MODEL)
+    return interpretarRespostaLLM(resposta_llm, template, mensagem_cliente, modelo)
+
+
+def montarPromptFinal(modelo: str, mensagem_cliente: str, regras: List[str]) -> str:
+    """Constrói o prompt final com regras, template e contexto antes da chamada ao GPT."""
+    template = MODELOS_BASE[modelo]
+    substituicoes_sugeridas = construirPreenchimentos(modelo, mensagem_cliente)
+    sugestoes_texto = "\n".join(f"{k}: {v}" for k, v in substituicoes_sugeridas.items())
+    regras_texto = "\n".join(f"- {regra}" for regra in regras)
+
+    return (
+        "Implemente exatamente o que está descrito abaixo.\n"
+        "Não adicione funcionalidades, não simplifique regras e não altere linguagem.\n"
+        "O comportamento da IA deve obedecer integralmente à especificação, ao contrato cognitivo, ao pseudo-código, aos modelos-base e ao mapa de decisão.\n"
+        "Regras cognitivas obrigatórias:\n"
+        f"{regras_texto}\n\n"
+        "Modelo-base escolhido (preencher campos entre colchetes e manter fechamento com 'posso'):\n"
+        f"CURTA:\n{template['curta']}\n\n"
+        f"COMPLETA:\n{template['completa']}\n\n"
+        "Sugestões objetivas para preencher colchetes (usar apenas como referência):\n"
+        f"{sugestoes_texto}\n\n"
+        "Mensagem do cliente (PT-BR, usar somente o conteúdo informado):\n"
+        f"{mensagem_cliente}\n\n"
+        "Responda em JSON com as chaves 'curta' e 'completa', mantendo exatamente a estrutura do modelo e a frase final 'Em seguida, posso explicar como aplicamos isso.'"
+    )
+
+
+def interpretarRespostaLLM(resposta_llm: str, template: dict, mensagem_cliente: str, modelo: str) -> dict:
+    """Converte a saída do GPT em dicionário, com fallback seguro para manter estrutura."""
+    try:
+        parsed = json.loads(resposta_llm)
+        if isinstance(parsed, dict):
+            curta = str(parsed.get("curta", "")).strip()
+            completa = str(parsed.get("completa", "")).strip()
+            if curta and completa:
+                return {"curta": curta, "completa": completa}
+    except json.JSONDecodeError:
+        pass
+
     substituicoes = construirPreenchimentos(modelo, mensagem_cliente)
+    fallback_curta = preencherTemplate(template["curta"], substituicoes)
+    fallback_completa = preencherTemplate(template["completa"], substituicoes)
+
+    texto_limpo = resposta_llm.strip()
     return {
-        "curta": preencherTemplate(template["curta"], substituicoes),
-        "completa": preencherTemplate(template["completa"], substituicoes),
+        "curta": texto_limpo.split("\n\n")[0].strip() if texto_limpo else fallback_curta,
+        "completa": texto_limpo or fallback_completa,
     }
 
 
