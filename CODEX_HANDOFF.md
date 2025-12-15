@@ -331,3 +331,174 @@ return {
     "resposta_curta": resposta.resposta_curta,
     "resposta_completa": resposta.resposta_completa
 }
+
+MODELOS-BASE — FORMATO TÉCNICO (PRONTOS PARA IA)
+
+Estes modelos-base são estruturas fixas.
+A IA preenche conteúdo, não altera a ordem, não muda o fechamento.
+
+Todos obedecem às regras:
+
+responder primeiro
+
+indução com “posso” (checkpoint)
+
+sem “se fizer sentido”
+
+sem empatia vazia
+
+PT-BR
+
+neutro comercial
+
+versão curta e completa
+
+Importante: cada modelo abaixo já está no formato ideal para virar template server-side (string / prompt interno).
+
+MODELO: modelo_primeiro_contato
+
+OBJETIVO: responder a uma pergunta inicial do lead (quando houver) ou dar contexto mínimo.
+
+CURTA
+
+[RESPOSTA_DIRETA_EM_1_OU_2_LINHAS].
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+[RESPOSTA_DIRETA_E_CLARA_A_PERGUNTA].
+[COMPLEMENTO_OBJETIVO_SE_NECESSARIO].
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_preco
+
+OBJETIVO: informar preço/faixa sem travar conversa.
+
+CURTA
+
+Os valores começam em [FAIXA_OU_VALOR_PERMITIDO] e variam conforme [CRITERIO_OBJETIVO].
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Os valores começam em [FAIXA_OU_VALOR] e variam conforme [ESCOPO_VOLUME_TIPO].
+Na maioria dos casos, a opção mais utilizada é [OPCAO_COMPATIVEL].
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_detalhes
+
+OBJETIVO: explicar funcionamento sem despejar conteúdo.
+
+CURTA
+
+Funciona assim: [EXPLICACAO_OBJETIVA].
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Funciona da seguinte forma: [EXPLICACAO_CLARA_SEM_JARGAO].
+[COMPLEMENTO_PRATICO_SE_NECESSARIO].
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_objecao
+
+OBJETIVO: responder objeção com fato/prática, sem acolhimento vazio.
+
+CURTA
+
+Na prática, isso é resolvido com [RESPOSTA_CONCRETA_A_OBJECao].
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Esse ponto costuma surgir quando [CONTEXTO_REALISTA].
+Na prática, resolvemos isso com [CRITERIO_OU_PROCESSO].
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_comparacao
+
+OBJETIVO: diferenciar sem atacar concorrente.
+
+CURTA
+
+A principal diferença está em [CRITERIO_REAL].
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+A principal diferença costuma estar em [CRITERIO_COMO_SUPORTE_PRAZO_RESULTADO].
+Isso impacta diretamente em [EFEITO_PRATICO].
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_urgencia
+
+OBJETIVO: responder rápido sem prometer fora da base.
+
+CURTA
+
+Sim, é possível atender nesse prazo.
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Sim, é possível atender nesse prazo, considerando [CONDICAO_REAL].
+Com isso alinhado, seguimos sem risco.
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_recuperacao (follow-up)
+
+OBJETIVO: retomar conversa sem cobrança.
+
+CURTA
+
+Retomando nossa conversa sobre [TEMA], ficou alguma pendência.
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Retomando nossa conversa sobre [TEMA], queria confirmar se ficou alguma dúvida ou ponto em aberto.
+Em seguida, posso explicar como aplicamos isso.
+
+MODELO: modelo_encerramento
+
+OBJETIVO: encerrar de forma profissional quando não é fit.
+
+CURTA
+
+Neste momento, o cenário indica que não é a melhor opção.
+Em seguida, posso explicar como aplicamos isso.
+
+
+COMPLETA
+
+Pelo cenário atual, essa solução não é a mais adequada agora.
+Seguimos disponíveis para outro momento.
+Em seguida, posso explicar como aplicamos isso.
+
+🔒 REGRAS DE USO (OBRIGATÓRIAS)
+
+A IA NÃO altera a estrutura
+
+A IA NÃO remove a linha final com “posso”
+
+A IA NÃO acrescenta perguntas abertas vagas
+
+A IA NÃO usa empatia genérica
+
+A IA preenche apenas os campos entre colchetes
+
+🧠 COMO A IA DEVE USAR OS MODELOS
+
+Instrução interna resumida:
+
+Selecione o modelo conforme a intenção.
+Preencha os campos com base no contexto e na Base da Empresa.
+Ajuste o tom ao perfil identificado.
+Não altere a ordem nem o fechamento.
