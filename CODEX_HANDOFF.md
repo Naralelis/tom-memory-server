@@ -140,3 +140,194 @@ O MVP é bem-sucedido se:
 •usuários conseguem gerar respostas úteis em menos de 1 minuto
 •respostas são usadas sem necessidade de reescrita extensa
 •o sistema não gera frases constrangedoras ou artificiais
+
+PSEUDO-CÓDIGO DO MOTOR
+
+(versão MVP · server-side · pronto para Codex)
+
+Este pseudo-código descreve o motor inteiro, função por função, na ordem correta.
+Ele é agnóstico de linguagem (funciona para Python, Node, Java, etc.).
+
+0️⃣ Estrutura de dados base
+struct LeadInput {
+    texto_usuario: string
+    arquivos: list<File>
+    objetivo_usuario: optional string
+}
+
+struct LeadContext {
+    mensagem_cliente: string
+    historico_curto: string
+    idioma: string
+}
+
+struct AnaliseResultado {
+    intencao: string
+    perfil: string
+    resposta_curta: string
+    resposta_completa: string
+}
+
+1️⃣ Função principal (único ponto de entrada)
+function executarAnalise(input: LeadInput) -> AnaliseResultado
+    assert usuarioClicouEmFazerAnalise == true
+
+    context = normalizarEntrada(input)
+    intencao = detectarIntencao(context)
+    perfil = detectarPerfil(context)
+
+    modelo = selecionarModelo(intencao)
+
+    respostaBase = gerarRespostaBase(context, modelo)
+    respostaAjustada = ajustarRespostaPorPerfil(respostaBase, perfil)
+
+    respostaFinal = validarResposta(respostaAjustada)
+
+    return respostaFinal
+
+
+📌 Regra:
+
+Nada roda sem usuarioClicouEmFazerAnalise == true.
+
+2️⃣ Normalização da entrada
+function normalizarEntrada(input: LeadInput) -> LeadContext
+    textoFinal = ""
+
+    if input.texto_usuario not empty
+        textoFinal += input.texto_usuario
+
+    for each arquivo in input.arquivos
+        textoExtraido = extrairTexto(arquivo)
+        textoFinal += "\n" + textoExtraido
+
+    assert textoFinal not empty
+
+    return LeadContext(
+        mensagem_cliente = extrairUltimaMensagem(textoFinal),
+        historico_curto = extrairHistoricoCurto(textoFinal),
+        idioma = "pt-br"
+    )
+
+
+📌 Se não houver texto suficiente → erro controlado.
+
+3️⃣ Detecção da intenção (o que foi perguntado)
+function detectarIntencao(context: LeadContext) -> string
+    texto = context.mensagem_cliente.lower()
+
+    if contem(texto, ["preço", "valor", "quanto custa"])
+        return "preco"
+
+    if contem(texto, ["como funciona", "detalhes", "explica"])
+        return "detalhes"
+
+    if contem(texto, ["caro", "agora não", "vou pensar"])
+        return "objecao"
+
+    if contem(texto, ["comparando", "outro fornecedor"])
+        return "comparacao"
+
+    if contem(texto, ["urgente", "pra hoje", "pra agora"])
+        return "urgencia"
+
+    if historicoIndicaSilencio(context.historico_curto)
+        return "followup"
+
+    return "primeiro_contato"
+
+
+📌 Sempre retorna uma intenção.
+
+4️⃣ Detecção do perfil de comunicação do cliente
+function detectarPerfil(context: LeadContext) -> string
+    texto = context.mensagem_cliente
+
+    if tamanhoFraseCurta(texto) and poucasPerguntas(texto)
+        return "direto"
+
+    if muitasPerguntas(texto) or tomCuidadoso(texto)
+        return "cauteloso"
+
+    if contem(texto, ["oii", "rs", "kk"]) or emojis(texto)
+        return "informal"
+
+    if contemTermosTecnicos(texto)
+        return "tecnico"
+
+    return "direto"
+
+
+📌 Regra de fallback: direto.
+
+5️⃣ Seleção do modelo-base
+function selecionarModelo(intencao: string) -> string
+    mapa = {
+        "preco": "modelo_preco",
+        "detalhes": "modelo_detalhes",
+        "objecao": "modelo_objecao",
+        "comparacao": "modelo_comparacao",
+        "urgencia": "modelo_urgencia",
+        "followup": "modelo_recuperacao",
+        "primeiro_contato": "modelo_primeiro_contato"
+    }
+
+    return mapa[intencao]
+
+
+📌 A IA não escolhe estrutura, apenas o modelo autorizado.
+
+6️⃣ Geração da resposta base (sem ajuste de tom ainda)
+function gerarRespostaBase(context: LeadContext, modelo: string) -> AnaliseResultado
+    resposta = IA_GERAR(
+        modelo = modelo,
+        mensagem_cliente = context.mensagem_cliente,
+        regras = CONTRATO_COGNITIVO
+    )
+
+    return resposta
+
+
+📌 Aqui a IA:
+
+responde à pergunta
+
+usa estrutura fixa
+
+termina com “posso”
+
+7️⃣ Ajuste por perfil (reescrita obrigatória)
+function ajustarRespostaPorPerfil(resposta: AnaliseResultado, perfil: string) -> AnaliseResultado
+    textoCurto = reescrever(resposta.resposta_curta, perfil)
+    textoCompleto = reescrever(resposta.resposta_completa, perfil)
+
+    resposta.resposta_curta = textoCurto
+    resposta.resposta_completa = textoCompleto
+
+    resposta.perfil = perfil
+
+    return resposta
+
+
+📌 Conteúdo igual. Tom ajustado.
+
+8️⃣ Validação final (anti-vergonha)
+function validarResposta(resposta: AnaliseResultado) -> AnaliseResultado
+    if pareceTextoIA(resposta)
+        resposta = simplificar(resposta)
+
+    if linguagemProibida(resposta)
+        resposta = reescreverSemLinguagemProibida(resposta)
+
+    return resposta
+
+
+📌 Última barreira antes de entregar.
+
+9️⃣ Saída final (imutável)
+return {
+    "intencao": resposta.intencao,
+    "perfil": resposta.perfil,
+    "resposta_curta": resposta.resposta_curta,
+    "resposta_completa": resposta.resposta_completa
+}
