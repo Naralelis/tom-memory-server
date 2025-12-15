@@ -502,3 +502,147 @@ Selecione o modelo conforme a intenção.
 Preencha os campos com base no contexto e na Base da Empresa.
 Ajuste o tom ao perfil identificado.
 Não altere a ordem nem o fechamento.
+
+MAPA DE DECISÃO FINAL
+
+(qual modelo usar, quando e por quê — MVP)
+
+Este mapa define a ordem de prioridade, desempates e exceções.
+Ele evita respostas erradas quando o texto do lead “mistura tudo”.
+
+1️⃣ REGRA DE OURO (sempre primeiro)
+
+Responder o que o lead perguntou por último.
+
+Se o histórico fala de várias coisas, vale a última mensagem do cliente.
+
+Nunca responder algo “mais estratégico” ignorando a pergunta explícita.
+
+2️⃣ ORDEM DE PRIORIDADE DAS INTENÇÕES
+
+(se mais de uma aparecer)
+
+Use a primeira que casar, de cima para baixo:
+
+urgencia
+Palavras de prazo, “hoje”, “agora”, “pra ontem”.
+
+preco
+“valor”, “quanto custa”, “preço”.
+
+comparacao
+“outro fornecedor”, “comparando”, “diferença entre”.
+
+objecao
+“caro”, “agora não”, “vou pensar”.
+
+detalhes
+“como funciona”, “me explica”, “detalha”.
+
+followup
+Histórico indica silêncio após envio anterior.
+
+primeiro_contato
+Tudo que não caiu acima.
+
+📌 Isso evita o erro clássico de:
+
+responder detalhes quando o lead quer preço
+ou preço quando o lead está com urgência.
+
+3️⃣ MAPEAMENTO DIRETO: INTENÇÃO → MODELO
+urgencia        → modelo_urgencia
+preco           → modelo_preco
+comparacao      → modelo_comparacao
+objecao         → modelo_objecao
+detalhes        → modelo_detalhes
+followup        → modelo_recuperacao
+primeiro_contato→ modelo_primeiro_contato
+encerramento    → modelo_encerramento
+
+
+Sem exceção no MVP.
+
+4️⃣ REGRAS DE DESEMPATE (casos ambíguos)
+Caso 1 — Preço + Detalhes
+
+“Quanto custa e como funciona?”
+
+➡️ modelo_preco
+Preço vem primeiro. Detalhes podem vir depois.
+
+Caso 2 — Objeção + Preço
+
+“Achei caro. Quanto ficaria?”
+
+➡️ modelo_preco
+Responde preço de forma objetiva e conduz.
+
+Caso 3 — Comparação + Preço
+
+“O de vocês custa quanto comparado ao X?”
+
+➡️ modelo_comparacao
+Depois, o fluxo natural leva ao preço.
+
+Caso 4 — Histórico longo + nova pergunta curta
+
+➡️ Ignorar ruído.
+➡️ Responder só a pergunta atual.
+
+5️⃣ PERFIL DO CLIENTE NUNCA MUDA O MODELO
+
+Isso é importante:
+
+Perfil ajusta o tom
+
+Perfil não muda o tipo de resposta
+
+Exemplo:
+
+Cliente técnico pedindo preço → modelo_preco
+
+Cliente informal pedindo preço → modelo_preco
+
+O modelo é decisão lógica.
+O perfil é decisão linguística.
+
+6️⃣ REGRA DE CONTINUIDADE (checkpoint)
+
+Todo modelo termina com:
+
+“Em seguida, posso explicar como aplicamos isso.”
+
+Função:
+
+induzir resposta mínima
+
+manter o lead no fluxo
+
+não sobrecarregar
+
+Nunca substituir por:
+
+pergunta aberta vaga
+
+“o que acha?”
+
+“te ajudo em algo?”
+
+7️⃣ REGRA DE FALHA CONTROLADA
+
+Se a IA não conseguir classificar com segurança:
+
+usar modelo_primeiro_contato
+
+responder de forma direta e neutra
+
+manter fechamento padrão com “posso”
+
+Nunca:
+
+inventar cenário
+
+pedir desculpa
+
+pedir mais informações antes de responder
